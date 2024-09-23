@@ -17,22 +17,25 @@ const words = [
 
 let randomizedWord =''
 let maskedWord = ''
+let guessCount = 0;
 
 const newGame = () => {
-    const random = Math.floor(Math.random()*10) +1
+    const random = Math.floor(Math.random() * words.length)
     randomizedWord = words[random]
     maskedWord ='*'.repeat(randomizedWord.length)
-    console.log(randomizedWord)
+    guessCount = 0;
     output.innerHTML = maskedWord
+    span.innerHTML = `${guessCount}`;
 }
 
 const win = () => {
-    alert(`You have guessed right, the word is ${randomizedWord}.`)
+    alert(`You have guessed right, the word is ${randomizedWord}. You needed ${guessCount} guesses.`)
     newGame()
 }
 
 
 const replaceFoundChars = (guess) => {
+    let found = false;
     for (let i = 0;i<randomizedWord.length;i++){
         const char = randomizedWord.substring(i,i+1)
         if (char === guess) {
@@ -40,11 +43,15 @@ const replaceFoundChars = (guess) => {
             newString.splice(i,1,guess)
             newString = newString.join('')
             maskedWord = newString
+            found = true;
         }
     }
     output.innerHTML = maskedWord
+    if (found && maskedWord === randomizedWord) {
+        win();
+    }
+ 
 }
-
 
 newGame()
 input.addEventListener('keypress',(e) => {
@@ -52,6 +59,9 @@ input.addEventListener('keypress',(e) => {
         e.preventDefault()
 
         const guess = input.value
+        guessCount++;
+        span.innerHTML = `${guessCount}`;
+
         if (guess.toLocaleUpperCase() === randomizedWord.toLocaleUpperCase()){
             win()
         } else if (guess.length === 1) {
